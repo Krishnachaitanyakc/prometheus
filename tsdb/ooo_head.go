@@ -127,13 +127,15 @@ func (o *OOOChunk) ToEncodedChunks(mint, maxt int64, useXOR2 bool) (chks []memCh
 			app.Append(s.st, s.t, s.f)
 		case chunkenc.EncHistogram:
 			// TODO(krajorama,ywwg): handle ST capable histogram chunk.
-			// Ignoring ok is ok, since we don't want to compare to the wrong previous appender anyway.
-			prevHApp, _ := prevApp.(*chunkenc.HistogramAppender)
+			// AppendHistogram will pick out a *HistogramAppender (or any
+			// other appender that exposes histogram-appendable internals)
+			// from prevApp if it needs to compute the cross-chunk counter
+			// reset; otherwise prevApp is silently ignored.
 			var (
 				newChunk chunkenc.Chunk
 				recoded  bool
 			)
-			newChunk, recoded, app, _ = app.AppendHistogram(prevHApp, s.st, s.t, s.h, false)
+			newChunk, recoded, app, _ = app.AppendHistogram(prevApp, s.st, s.t, s.h, false)
 			if newChunk != nil { // A new chunk was allocated.
 				if !recoded {
 					chks = append(chks, memChunk{chunk, cmint, cmaxt, nil})
@@ -143,13 +145,15 @@ func (o *OOOChunk) ToEncodedChunks(mint, maxt int64, useXOR2 bool) (chks []memCh
 			}
 		case chunkenc.EncFloatHistogram:
 			// TODO(krajorama,ywwg): handle ST capable float histogram chunk.
-			// Ignoring ok is ok, since we don't want to compare to the wrong previous appender anyway.
-			prevHApp, _ := prevApp.(*chunkenc.FloatHistogramAppender)
+			// AppendFloatHistogram will pick out a *FloatHistogramAppender
+			// (or any other appender that exposes float-histogram-appendable
+			// internals) from prevApp if it needs to compute the cross-chunk
+			// counter reset; otherwise prevApp is silently ignored.
 			var (
 				newChunk chunkenc.Chunk
 				recoded  bool
 			)
-			newChunk, recoded, app, _ = app.AppendFloatHistogram(prevHApp, s.st, s.t, s.fh, false)
+			newChunk, recoded, app, _ = app.AppendFloatHistogram(prevApp, s.st, s.t, s.fh, false)
 			if newChunk != nil { // A new chunk was allocated.
 				if !recoded {
 					chks = append(chks, memChunk{chunk, cmint, cmaxt, nil})
