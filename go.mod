@@ -60,7 +60,7 @@ require (
 	github.com/open-telemetry/opentelemetry-collector-contrib/processor/deltatocumulativeprocessor v0.153.0
 	github.com/outscale/osc-sdk-go/v2 v2.34.0
 	github.com/ovh/go-ovh v1.9.0
-	github.com/pb33f/libopenapi v0.37.2
+	github.com/pb33f/libopenapi v0.37.3
 	github.com/pb33f/libopenapi-validator v0.13.8
 	github.com/prometheus/alertmanager v0.32.1
 	github.com/prometheus/client_golang v1.23.2
